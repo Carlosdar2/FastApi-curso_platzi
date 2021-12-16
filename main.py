@@ -4,6 +4,7 @@ from typing import Optional
 #pydantic
 
 from fastapi  import Body
+from fastapi.param_functions import Query
 from pydantic import BaseModel
 
 
@@ -29,3 +30,10 @@ def home():
 @app.post('/person/new')
 def create_person(person: Person = Body(...)):
     return person
+#vadilations +
+@app.get('/person/details/')
+def show_person(
+    name: Optional[str] = Query(None, min_length=1, max_length=10),
+    age: str = Query(...)
+):
+    return {name : age}
