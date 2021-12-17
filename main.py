@@ -6,25 +6,55 @@ from typing import Optional
 from fastapi  import Body
 from fastapi.param_functions import Query, Path
 from pydantic import BaseModel
-
-
+from enum import  Enum
+from pydantic import Field
  #FastApi
 from fastapi import FastAPI
-from pydantic.utils import path_type
+from pydantic.networks import EmailStr, HttpUrl
+from pydantic.types import PaymentCardBrand
+
 
 app = FastAPI()
+
 #models
+class HairColor(Enum):
+    write = 'Write'
+    brown = 'Brown'
+    black = 'Black'
+    blonde = 'Blonde'
+    red = 'Red'
+
+
 class  Location(BaseModel):
-    city: str
-    state : str
-    country =  str
+    city: str = Field(
+        ...,
+    )
+    state : str = Field(
+        ...,
+    )
+    country: str = Field(
+        ...,
+    )
 
 class Person(BaseModel): # Person parameters
-    first_name: str
-    last_name: str
-    age_person: int
-    color: Optional[str] = None
-    maried: Optional[bool] = None
+    first_name: str = Field(
+        ...,
+        min_length=1,
+        max_length=20
+    )
+    last_name: str = Field(
+        ...,
+        min_length=1,
+        max_length=20
+    )
+    age_person: int = Field(
+        gt=0,
+        le=100
+    )
+    emal: EmailStr
+    personal_blog = HttpUrl
+    hair_color: Optional[HairColor] = Field(default=None)
+    maried: Optional[bool] = Field(default=None)
     
 @app.get("/")
 def home():
@@ -35,6 +65,8 @@ def home():
 @app.post('/person/new')
 def create_person(person: Person = Body(...)):
     return person
+
+
 #vadilations +
 @app.get('/person/details/')
 def show_person(
@@ -54,6 +86,8 @@ def show_person(
 ):
     return {name : age}
 
+
+
 #Validations path
 @app.get("/person/detail/{person_id}")
 def show_person(
@@ -66,8 +100,9 @@ def show_person(
 ):
     return {person_id: 'It exists!'}
 
-#request body
 
+
+#request body
 @app.put('/person/{person_id}')
 def udatd_person(
     person_id: int = Path(
