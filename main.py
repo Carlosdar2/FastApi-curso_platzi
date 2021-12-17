@@ -10,9 +10,14 @@ from pydantic import BaseModel
 
  #FastApi
 from fastapi import FastAPI
+from pydantic.utils import path_type
 
 app = FastAPI()
-
+#models
+class  Location(BaseModel):
+    city: str
+    state : str
+    country =  str
 
 class Person(BaseModel): # Person parameters
     first_name: str
@@ -56,8 +61,25 @@ def show_person(
         ...,
         gt=0, 
         title="Person Id",
-        description="This is the person id. It's requiered"
-
-        )
+        description="This is the person id. It's requiered "
+    )
 ):
     return {person_id: 'It exists!'}
+
+#request body
+
+@app.put('/person/{person_id}')
+def udatd_person(
+    person_id: int = Path(
+        ...,
+        title = "Person ID",
+        descritions ="This is Person ID.",
+        gt=0
+    ),
+    person: Person = Body(...),
+    location: Location = Body(...)
+
+):
+    result = person.dict()
+    result.update(location.dict())
+    return result
