@@ -1,18 +1,16 @@
 #python
-
 from typing import Optional
-#pydantic
 
+#pydantic
+from pydantic import BaseModel
+from pydantic import Field
+from pydantic.networks import EmailStr, HttpUrl
+from enum import  Enum
+
+#FastApi
 from fastapi  import Body
 from fastapi.param_functions import Query, Path
-from pydantic import BaseModel
-from enum import  Enum
-from pydantic import Field
- #FastApi
 from fastapi import FastAPI
-from pydantic.networks import EmailStr, HttpUrl
-from pydantic.types import PaymentCardBrand
-
 
 app = FastAPI()
 
@@ -51,8 +49,13 @@ class Person(BaseModel): # Person parameters
         gt=0,
         le=100
     )
-    emal: EmailStr
-    personal_blog = HttpUrl
+    emal: EmailStr = Field(
+        ...,
+        
+        )
+    personal_blog: HttpUrl = Field(
+        ...
+    )
     hair_color: Optional[HairColor] = Field(default=None)
     maried: Optional[bool] = Field(default=None)
     
@@ -60,8 +63,7 @@ class Person(BaseModel): # Person parameters
 def home():
     return {'Hello':' World '}
 
-#request_response_bodye
-
+#request_response_body
 @app.post('/person/new')
 def create_person(person: Person = Body(...)):
     return person
