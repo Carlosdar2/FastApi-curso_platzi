@@ -11,7 +11,7 @@ from enum import  Enum
 from fastapi  import Body
 from fastapi.param_functions import Query, Path
 from fastapi import FastAPI
-
+from fastapi import status  
 app = FastAPI()
 
 
@@ -72,18 +72,28 @@ class Personout(PersonBase):
     pass
 
 
-@app.get("/")
+@app.get(
+    path="/",
+    status_code=status.HTTP_200_OK
+    )
 def home():
     return {'Hello':' World '}
 
 #request_response_body
-@app.post('/person/new', response_model=Personout )
+@app.post(
+    path='/person/new',
+    response_model=Personout,
+    status_code=status.HTTP_201_CREATED
+    )
 def create_person(person: Person = Body(...)):
     return person
 
 
 #vadilations +
-@app.get('/person/details/')
+@app.get(
+    path='/person/details/',
+    status_code=status.HTTP_202_ACCEPTED
+    )
 def show_person(
     name: Optional[str] = Query(
     None, 
@@ -104,7 +114,10 @@ def show_person(
 
 
 #Validations path
-@app.get("/person/detail/{person_id}")
+@app.get(
+    path="/person/detail/{person_id}",
+    status_code=status.HTTP_208_ALREADY_REPORTED
+    )
 def show_person(
     person_id: int = Path(
         ...,
@@ -118,7 +131,10 @@ def show_person(
 
 
 #request body
-@app.put('/person/{person_id}')
+@app.put(
+    path='/person/{person_id}',
+    status_code=status.HTTP_202_ACCEPTED
+    )
 def udatd_person(
     person_id: int = Path(
         ...,
