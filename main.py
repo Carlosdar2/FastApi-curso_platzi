@@ -14,6 +14,8 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
+
+
 #models
 class HairColor(Enum):
     write = 'Write'
@@ -22,6 +24,32 @@ class HairColor(Enum):
     blonde = 'Blonde'
     red = 'Red'
 
+
+#Models_base
+class PersonBase(BaseModel):
+    first_name: str = Field(
+        ...,
+        min_length=1,
+        max_length=20
+    )
+    last_name: str = Field(
+        ...,
+        min_length=1,
+        max_length=20
+    )
+    age_person: int = Field(
+        gt=0,
+        le=100
+    )
+    emal: EmailStr = Field(
+        ...,
+        
+        )
+    #personal_blog: HttpUrl = Field(
+     #   ...
+    #)
+    hair_color: Optional[HairColor] = Field(default=None)
+    maried: Optional[bool] = Field(default=None)
 
 class  Location(BaseModel):
     city: str = Field(
@@ -34,59 +62,16 @@ class  Location(BaseModel):
         ...,
     )
 
-class Person(BaseModel): # Person parameters
-    first_name: str = Field(
-        ...,
-        min_length=1,
-        max_length=20
-    )
-    last_name: str = Field(
-        ...,
-        min_length=1,
-        max_length=20
-    )
-    age_person: int = Field(
-        gt=0,
-        le=100
-    )
-    emal: EmailStr = Field(
-        ...,
-        
-        )
-    #personal_blog: HttpUrl = Field(
-     #   ...
-    #)
-    hair_color: Optional[HairColor] = Field(default=None)
-    maried: Optional[bool] = Field(default=None)
+class Person(PersonBase): # Person parameters
     password: str = Field(
         ...,
         min_length=8
     )
 
-class Personout(BaseModel):
-    first_name: str = Field(
-        ...,
-        min_length=1,
-        max_length=20
-    )
-    last_name: str = Field(
-        ...,
-        min_length=1,
-        max_length=20
-    )
-    age_person: int = Field(
-        gt=0,
-        le=100
-    )
-    emal: EmailStr = Field(
-        ...,
-        
-        )
-    #personal_blog: HttpUrl = Field(
-     #   ...
-    #)
-    hair_color: Optional[HairColor] = Field(default=None)
-    maried: Optional[bool] = Field(default=None)
+class Personout(PersonBase):
+    pass
+
+
 @app.get("/")
 def home():
     return {'Hello':' World '}
