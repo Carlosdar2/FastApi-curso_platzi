@@ -53,18 +53,46 @@ class Person(BaseModel): # Person parameters
         ...,
         
         )
-    personal_blog: HttpUrl = Field(
-        ...
-    )
+    #personal_blog: HttpUrl = Field(
+     #   ...
+    #)
     hair_color: Optional[HairColor] = Field(default=None)
     maried: Optional[bool] = Field(default=None)
-    
+    password: str = Field(
+        ...,
+        min_length=8
+    )
+
+class Personout(BaseModel):
+    first_name: str = Field(
+        ...,
+        min_length=1,
+        max_length=20
+    )
+    last_name: str = Field(
+        ...,
+        min_length=1,
+        max_length=20
+    )
+    age_person: int = Field(
+        gt=0,
+        le=100
+    )
+    emal: EmailStr = Field(
+        ...,
+        
+        )
+    #personal_blog: HttpUrl = Field(
+     #   ...
+    #)
+    hair_color: Optional[HairColor] = Field(default=None)
+    maried: Optional[bool] = Field(default=None)
 @app.get("/")
 def home():
     return {'Hello':' World '}
 
 #request_response_body
-@app.post('/person/new')
+@app.post('/person/new', response_model=Personout )
 def create_person(person: Person = Body(...)):
     return person
 
