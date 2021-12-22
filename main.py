@@ -2,21 +2,21 @@
 from typing import Optional
 
 #pydantic
-from pydantic import BaseModel
+from pydantic import BaseModel, fields
 from pydantic import Field
 from pydantic.networks import EmailStr, HttpUrl
 from enum import  Enum
 
 #FastApi
 from fastapi  import Body
-from fastapi.param_functions import Query, Path
+from fastapi.param_functions import Form, Query, Path
 from fastapi import FastAPI
 from fastapi import status  
 app = FastAPI()
 
 
 
-#models
+#Models_base
 class HairColor(Enum):
     write = 'Write'
     brown = 'Brown'
@@ -25,7 +25,6 @@ class HairColor(Enum):
     red = 'Red'
 
 
-#Models_base
 class PersonBase(BaseModel):
     first_name: str = Field(
         ...,
@@ -51,6 +50,11 @@ class PersonBase(BaseModel):
     hair_color: Optional[HairColor] = Field(default=None)
     maried: Optional[bool] = Field(default=None)
 
+
+class FormOut(BaseModel):
+    username: str = Field(..., max_length=20, example="Miguel112")
+
+#MODELS
 class  Location(BaseModel):
     city: str = Field(
         ...,
@@ -149,3 +153,11 @@ def udatd_person(
     result = person.dict()
     result.update(location.dict())
     return result
+
+
+@app.post(
+    path='/login',
+    response_model= FormOut
+)
+def login(username: str = Form(...,max_length=20), password: str = Form(..., max_length=7)):
+    return FormOut(username=username)

@@ -1,4 +1,4 @@
-#!/home/daniel/FastApi/env/bin/python3
+#!/home/daniel/FastApi/env/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
