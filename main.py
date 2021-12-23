@@ -1,5 +1,6 @@
 #python
-from typing import Optional, Sized
+from typing import Optional
+import fastapi
 from fastapi.datastructures import Default, UploadFile
 
 #pydantic
@@ -9,10 +10,12 @@ from pydantic.networks import EmailStr
 from enum import  Enum
 
 #FastApi
+from fastapi import HTTPException
 from fastapi  import Body, UploadFile
 from fastapi.param_functions import Form, Query, Path, Header, Cookie, File
 from fastapi import FastAPI
-from fastapi import status  
+from fastapi import status
+
 app = FastAPI()
 
 
@@ -53,7 +56,10 @@ class PersonBase(BaseModel):
 
 
 class FormOut(BaseModel):
-    username: str = Field(..., max_length=20, example="Miguel112")
+    username: str = Field(
+        ...,
+        max_length=20, 
+        example="Miguel112")
 
 #MODELS
 class  Location(BaseModel):
@@ -79,7 +85,8 @@ class Personout(PersonBase):
 
 @app.get(
     path="/",
-    status_code=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK,
+    tags=['Raiz']
     )
 def home():
     return {'Hello':' World '}
@@ -88,7 +95,8 @@ def home():
 @app.post(
     path='/person/new',
     response_model=Personout,
-    status_code=status.HTTP_201_CREATED
+    status_code=status.HTTP_201_CREATED,
+    tags= ['Persons']
     )
 def create_person(person: Person = Body(...)):
     return person
@@ -97,7 +105,8 @@ def create_person(person: Person = Body(...)):
 #vadilations +
 @app.get(
     path='/person/details/',
-    status_code=status.HTTP_202_ACCEPTED
+    status_code=status.HTTP_202_ACCEPTED,
+    tags=['Persons']
     )
 def show_person(
     name: Optional[str] = Query(
@@ -111,19 +120,24 @@ def show_person(
     age: str = Query(
         ..., 
         title="Person Age",
-        description=" This is the person age. It's required"
+        description=" This is the person age. It's required",
+        max_length=33,
+        min_length=23,
+        
         )
 ):
     return {name : age}
 
-
+#id persons
+persons = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 #Validations path
 @app.get(
     path="/person/detail/{person_id}",
-    status_code=status.HTTP_208_ALREADY_REPORTED
+    status_code=status.HTTP_208_ALREADY_REPORTED,
+    tags=['Person_id']
     )
-def show_person(
+def show_person_id(
     person_id: int = Path(
         ...,
         gt=0, 
@@ -131,6 +145,11 @@ def show_person(
         description="This is the person id. It's requiered "
     )
 ):
+    if person_id not in persons:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="This person doesn'texist!"
+            )
     return {person_id: 'It exists!'}
 
 
@@ -138,7 +157,8 @@ def show_person(
 #request body
 @app.put(
     path='/person/{person_id}',
-    status_code=status.HTTP_202_ACCEPTED
+    status_code=status.HTTP_202_ACCEPTED,
+    tags=['Person_update']
     )
 def udatd_person(
     person_id: int = Path(
@@ -158,7 +178,8 @@ def udatd_person(
 #Forms
 @app.post(
     path='/login',
-    response_model= FormOut
+    response_model= FormOut,
+    tags=['login']
 )
 def login(username: str = Form(...,max_length=20), password: str = Form(..., max_length=7)):
     return FormOut(username=username)
@@ -168,7 +189,8 @@ def login(username: str = Form(...,max_length=20), password: str = Form(..., max
 
 @app.post(
     path='/contact',
-    status_code=status.HTTP_201_CREATED
+    status_code=status.HTTP_201_CREATED,
+    tags=['Contact']
 )
 def contact(
     first_name: str = Form(
@@ -194,7 +216,8 @@ def contact(
 
 #files
 @app.post(
-    path='/post-image'
+    path='/post-image',
+    tags=['Posts']
 )
 def post_image(
     image: UploadFile = File(...,)
