@@ -1,6 +1,6 @@
 #python
-from typing import Optional
-from fastapi.datastructures import Default
+from typing import Optional, Sized
+from fastapi.datastructures import Default, UploadFile
 
 #pydantic
 from pydantic import BaseModel
@@ -9,8 +9,8 @@ from pydantic.networks import EmailStr
 from enum import  Enum
 
 #FastApi
-from fastapi  import Body
-from fastapi.param_functions import Form, Query, Path, Header, Cookie
+from fastapi  import Body, UploadFile
+from fastapi.param_functions import Form, Query, Path, Header, Cookie, File
 from fastapi import FastAPI
 from fastapi import status  
 app = FastAPI()
@@ -191,3 +191,17 @@ def contact(
     ads: Optional[str] = Cookie(default=None)
 ):
     return user_agent
+
+#files
+@app.post(
+    path='/post-image'
+)
+def post_image(
+    image: UploadFile = File(...,)
+
+):
+    return {
+        'filename': image.filename ,
+        'Format': image.content_type,
+        'Size(kb)': round(len(image.file.read())/1024, ndigits=2)
+    }
