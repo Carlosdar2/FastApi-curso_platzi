@@ -96,9 +96,23 @@ def home():
     path='/person/new',
     response_model=Personout,
     status_code=status.HTTP_201_CREATED,
-    tags= ['Persons']
+    tags= ['Persons'],
+    summary='Create Persons in the app'
     )
 def create_person(person: Person = Body(...)):
+    
+    """
+        Created Person
+
+
+        - This path operation creates a person in the app and save the information in the database
+
+        - Parameters:
+            Request body parameter:
+             - **Person: Person** -> A person model with foirst name, last name , age , hair color and marital status
+
+            - Returns Returns a Person model with foirst name, last name, age, hair color and marital status
+    """
     return person
 
 
@@ -126,6 +140,18 @@ def show_person(
         
         )
 ):
+    """
+        Show Persons
+
+
+        - This path operation shows a person through the parameters that are indicated
+
+        - Parameters:
+            Request body parameter:
+             - **Person: Person** -> A person model with foirst name, age 
+
+            - Returns Returns a Person model with foirst name, age
+   """
     return {name : age}
 
 #id persons
@@ -138,6 +164,7 @@ persons = [1, 2, 3, 4, 5, 6, 7, 8, 9]
     tags=['Person_id']
     )
 def show_person_id(
+
     person_id: int = Path(
         ...,
         gt=0, 
@@ -145,6 +172,18 @@ def show_person_id(
         description="This is the person id. It's requiered "
     )
 ):
+    """
+        Show Persons for ID
+
+
+        - This path operation shows a person through the ID from each person
+
+        - Parameters:
+            Request body parameter:
+             - **Person: Person** -> A person ID
+
+            - Returns Returns a Person model with ID from person
+   """
     if person_id not in persons:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -160,7 +199,7 @@ def show_person_id(
     status_code=status.HTTP_202_ACCEPTED,
     tags=['Person_update']
     )
-def udatd_person(
+def updatd_person(
     person_id: int = Path(
         ...,
         title = "Person ID",
@@ -171,6 +210,21 @@ def udatd_person(
     location: Location = Body(...)
 
 ):
+    """
+        Update Person
+
+
+        - This path operation updates data of a person who is registered in the database
+
+
+        - Parameters:
+            Request body parameter:
+             - **Person: Person** -> To this path operation the parameters person_id, the Person Model and the location are passed
+
+
+            - Returns: Returns the person with all the updated data that the client has indicated to update
+            """
+
     result = person.dict()
     result.update(location.dict())
     return result
@@ -181,7 +235,24 @@ def udatd_person(
     response_model= FormOut,
     tags=['login']
 )
-def login(username: str = Form(...,max_length=20), password: str = Form(..., max_length=7)):
+def login(
+    username: str = Form(...,max_length=20),
+    password: str = Form(..., max_length=7)):
+    """
+        Update Person
+
+
+        - This path operation updates data of a person who is registered in the database
+
+
+        - Parameters:
+            Request body parameter:
+             - **Person: Person** -> To this path operation the parameters person_id, the Person Model and the location are passed
+
+
+            - Returns: Returns the person with all the updated data that the client has indicated to update
+        """
+
     return FormOut(username=username)
 
 
@@ -223,6 +294,22 @@ def post_image(
     image: UploadFile = File(...,)
 
 ):
+
+    """
+         load Image
+
+
+        - This path operation load image 
+
+
+        - Parameters:
+            Request body parameter:
+             - **Load image** -> content_type and file
+
+
+            - Returns: Returns the file |that was previously charged
+            """
+
     return {
         'filename': image.filename ,
         'Format': image.content_type,
