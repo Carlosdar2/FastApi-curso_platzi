@@ -236,6 +236,7 @@ def updatd_person(
     tags=['login']
 )
 def login(
+    deprecated=True, 
     username: str = Form(...,max_length=20),
     password: str = Form(..., max_length=7)):
     """
@@ -243,6 +244,7 @@ def login(
 
 
         - This path operation updates data of a person who is registered in the database
+
 
 
         - Parameters:
