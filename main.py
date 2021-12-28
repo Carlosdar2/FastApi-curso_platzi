@@ -285,6 +285,35 @@ def contact(
     user_agent: Optional[str] = Header(default=None),
     ads: Optional[str] = Cookie(default=None)
 ):
+    """
+        Contact agent
+
+
+        - This path operation Access information about.
+
+
+
+        - Parameters:
+            Request header parameters:
+             - ** agent : agent  **, ** ads : ads  -> To this path operation the header parameters:
+                - user_agent: Optional[str] = Header(default=None),
+                - ads: Optional[str] = Cookie(default=None)
+             
+            Request body parameters: 
+            - first_name,
+            - last_neme,
+            - email,
+            - message,
+            - person_id,
+                the Person Model and the location are passed
+
+
+            - Returns: 
+
+
+returns the agent's specifications where the agency's request is made. The computer, the browser, the operating system, parts of it, etc.
+        """
+
     return user_agent
 
 #files
